@@ -14,7 +14,7 @@ function CVPreview() {
       <div className="border-b pb-5">
         <button
           onClick={printCV}
-          className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white"
+          className="print:hidden rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white"
         >
           Print
         </button>
