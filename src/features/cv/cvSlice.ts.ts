@@ -66,28 +66,14 @@ const cvSlice = createSlice({
   name: "cv",
   initialState: initialState,
   reducers: {
-    updateName: (state, action: PayloadAction<string>) => {
-      state.personal.name = action.payload;
-    },
-
-    updatePhone: (state, action: PayloadAction<string>) => {
-      state.personal.phonenum = action.payload;
-    },
-
-    updateEmail: (state, action: PayloadAction<string>) => {
-      state.personal.email = action.payload;
-    },
-
-    updateLocation: (state, action: PayloadAction<string>) => {
-      state.personal.location = action.payload;
-    },
-
-    updateJobTitle: (state, action: PayloadAction<string>) => {
-      state.personal.jobTitle = action.payload;
-    },
-
-    updateLinkedin: (state, action: PayloadAction<string>) => {
-      state.personal.linkedin = action.payload;
+    updatePersonal: (
+      state,
+      action: PayloadAction<{
+        field: keyof PersonalInfo;
+        value: string;
+      }>,
+    ) => {
+      state.personal[action.payload.field] = action.payload.value;
     },
     addEducation: (state, action: PayloadAction<Education>) => {
       state.education.push(action.payload);
@@ -129,12 +115,7 @@ const cvSlice = createSlice({
 });
 
 export const {
-  updateName,
-  updatePhone,
-  updateEmail,
-  updateLocation,
-  updateJobTitle,
-  updateLinkedin,
+  updatePersonal,
   addEducation,
   removeEducation,
   addExperience,

@@ -1,12 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import {
-  updateName,
-  updatePhone,
-  updateEmail,
-  updateLocation,
-  updateJobTitle,
-  updateLinkedin,
-} from "../features/cv/cvSlice.ts";
+import { updatePersonal } from "../features/cv/cvSlice.ts";
 
 function Field({
   label,
@@ -58,7 +51,9 @@ function PersonalInfo() {
           label="Full Name"
           value={personal.name}
           placeholder="e.g. Nischal Shrestha"
-          onChange={(value) => dispatch(updateName(value))}
+          onChange={(value) =>
+            dispatch(updatePersonal({ field: "name", value }))
+          }
           full
         />
 
@@ -66,35 +61,45 @@ function PersonalInfo() {
           label="Job Title"
           value={personal.jobTitle}
           placeholder="e.g. Frontend Developer"
-          onChange={(value) => dispatch(updateJobTitle(value))}
+          onChange={(value) =>
+            dispatch(updatePersonal({ field: "jobTitle", value }))
+          }
         />
 
         <Field
           label="Phone"
           value={personal.phonenum}
           placeholder="e.g. 98XXXXXXXX"
-          onChange={(value) => dispatch(updatePhone(value))}
+          onChange={(value) =>
+            dispatch(updatePersonal({ field: "phonenum", value }))
+          }
         />
 
         <Field
           label="Email"
           value={personal.email}
           placeholder="e.g. you@email.com"
-          onChange={(value) => dispatch(updateEmail(value))}
+          onChange={(value) =>
+            dispatch(updatePersonal({ field: "email", value }))
+          }
         />
 
         <Field
           label="Location"
           value={personal.location}
           placeholder="e.g. Kathmandu, Nepal"
-          onChange={(value) => dispatch(updateLocation(value))}
+          onChange={(value) =>
+            dispatch(updatePersonal({ field: "location", value }))
+          }
         />
 
         <Field
           label="LinkedIn"
           value={personal.linkedin}
           placeholder="linkedin.com/xxx"
-          onChange={(value) => dispatch(updateLinkedin(value))}
+          onChange={(value) =>
+            dispatch(updatePersonal({ field: "linkedin", value }))
+          }
           full
         />
       </div>
