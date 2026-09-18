@@ -6,6 +6,7 @@ import {
   updateExperience,
   removeExperience,
 } from "../features/cv/cvSlice.ts";
+import { validatedetails } from "../features/cv/validation.ts";
 
 function Field({
   value,
@@ -36,7 +37,26 @@ function Experience() {
   const editingExperienceIndex = useAppSelector(
     (state) => state.cv.editingExperienceIndex,
   );
+  const handleAdd = () => {
+    if (
+      !validatedetails(
+        experienceForm.job,
+        experienceForm.company,
+        experienceForm.startDate,
+        experienceForm.endDate,
+        experienceForm.description,
+      )
+    ) {
+      alert("Please fill all fields");
+      return;
+    }
 
+    if (editingExperienceIndex === null) {
+      dispatch(saveExperience());
+    } else {
+      dispatch(updateExperience());
+    }
+  };
   return (
     <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm">
       <h2 className="mb-4 text-xl font-semibold text-gray-900">Experience</h2>
@@ -83,13 +103,7 @@ function Experience() {
 
       <button
         className="mt-4 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white"
-        onClick={() => {
-          if (editingExperienceIndex === null) {
-            dispatch(saveExperience());
-          } else {
-            dispatch(updateExperience());
-          }
-        }}
+        onClick={handleAdd}
       >
         {editingExperienceIndex === null
           ? "Add Experience"

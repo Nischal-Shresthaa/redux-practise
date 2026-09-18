@@ -1,5 +1,7 @@
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { updatePersonal } from "../features/cv/cvSlice.ts";
+import { validate } from "../features/cv/validation";
+
 function Field({
   label,
   value,
@@ -20,7 +22,7 @@ function Field({
       </label>
 
       <input
-        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        className="w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none transition focus:border-black focus:ring-2 focus:ring-blue-100"
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
@@ -64,7 +66,7 @@ function PersonalInfo() {
         <Field
           label="Job Title"
           value={personal.jobTitle}
-          placeholder="e.g. Frontend Developer"
+          placeholder=" Developer"
           onChange={(value) =>
             dispatch(
               updatePersonal({
@@ -79,28 +81,35 @@ function PersonalInfo() {
           label="Phone"
           value={personal.phonenum}
           placeholder="e.g. 98XXXXXXXX"
-          onChange={(value) =>
+          onChange={(value) => {
+            const error = validate(value, "Phone");
+
+            if (error) {
+              alert(error);
+              return;
+            }
+
             dispatch(
               updatePersonal({
                 field: "phonenum",
                 value,
               }),
-            )
-          }
+            );
+          }}
         />
 
         <Field
           label="Email"
           value={personal.email}
           placeholder="e.g. you@email.com"
-          onChange={(value) =>
+          onChange={(value) => {
             dispatch(
               updatePersonal({
                 field: "email",
                 value,
               }),
-            )
-          }
+            );
+          }}
         />
 
         <Field

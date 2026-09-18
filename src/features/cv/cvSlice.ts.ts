@@ -1,5 +1,4 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-
 interface PersonalInfo {
   name: string;
   phonenum: string;

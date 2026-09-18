@@ -6,7 +6,7 @@ import {
   updateEducation,
   removeEducation,
 } from "../features/cv/cvSlice.ts";
-
+import { validatedetails } from "../features/cv/validation.ts";
 function Field({
   value,
   placeholder,
@@ -18,7 +18,7 @@ function Field({
 }) {
   return (
     <input
-      className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500"
+      className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-black"
       placeholder={placeholder}
       value={value}
       onChange={(event) => onChange(event.target.value)}
@@ -36,6 +36,27 @@ function Education() {
   const editingEducationIndex = useAppSelector(
     (state) => state.cv.editingEducationIndex,
   );
+  const handleAdd = () => {
+    if (
+      !validatedetails(
+        educationForm.level,
+        educationForm.institution,
+        educationForm.field,
+        educationForm.startYear,
+        educationForm.endYear,
+        educationForm.gpa,
+      )
+    ) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    if (editingEducationIndex === null) {
+      dispatch(saveEducation());
+    } else {
+      dispatch(updateEducation());
+    }
+  };
 
   return (
     <div className="rounded-xl border bg-white p-5 shadow-sm">
@@ -85,13 +106,7 @@ function Education() {
 
       <button
         className="mt-4 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white"
-        onClick={() => {
-          if (editingEducationIndex === null) {
-            dispatch(saveEducation());
-          } else {
-            dispatch(updateEducation());
-          }
-        }}
+        onClick={handleAdd}
       >
         {editingEducationIndex === null ? "Add Education" : "Update Education"}
       </button>

@@ -4,7 +4,6 @@ import Experience from "./components/experience";
 import Skills from "./components/skills";
 import Projects from "./components/project";
 import CVPreview from "./components/CVPreview";
-
 function App() {
   return (
     <div className="min-h-screen bg-gray-100">
