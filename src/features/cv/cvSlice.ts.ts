@@ -40,11 +40,39 @@ interface Project {
 
 interface CVState {
   personal: PersonalInfo;
+  educationForm: Education;
   education: Education[];
+  editingEducationIndex: number | null;
+  experienceForm: Experience;
   experience: Experience[];
+  editingExperienceIndex: number | null;
+  skillForm: Skill;
   skills: Skill[];
+  editingSkillIndex: number | null;
   projects: Project[];
 }
+
+const emptyEducation: Education = {
+  level: "",
+  institution: "",
+  field: "",
+  startYear: "",
+  endYear: "",
+  gpa: "",
+};
+
+const emptyExperience: Experience = {
+  job: "",
+  company: "",
+  startDate: "",
+  endDate: "",
+  description: "",
+};
+
+const emptySkill: Skill = {
+  name: "",
+  level: "",
+};
 
 const initialState: CVState = {
   personal: {
@@ -56,15 +84,25 @@ const initialState: CVState = {
     linkedin: "",
   },
 
+  educationForm: { ...emptyEducation },
   education: [],
+  editingEducationIndex: null,
+
+  experienceForm: { ...emptyExperience },
   experience: [],
+  editingExperienceIndex: null,
+
+  skillForm: { ...emptySkill },
   skills: [],
+  editingSkillIndex: null,
+
   projects: [],
 };
 
 const cvSlice = createSlice({
   name: "cv",
-  initialState: initialState,
+  initialState,
+
   reducers: {
     updatePersonal: (
       state,
@@ -75,54 +113,138 @@ const cvSlice = createSlice({
     ) => {
       state.personal[action.payload.field] = action.payload.value;
     },
-    addEducation: (state, action: PayloadAction<Education>) => {
-      state.education.push(action.payload);
+
+    updateEducationForm: (
+      state,
+      action: PayloadAction<{
+        field: keyof Education;
+        value: string;
+      }>,
+    ) => {
+      state.educationForm[action.payload.field] = action.payload.value;
+    },
+
+    saveEducation: (state) => {
+      state.education.push({ ...state.educationForm });
+      state.educationForm = { ...emptyEducation };
+    },
+
+    startEditingEducation: (state, action: PayloadAction<number>) => {
+      state.educationForm = { ...state.education[action.payload] };
+      state.editingEducationIndex = action.payload;
+    },
+
+    updateEducation: (state) => {
+      const index = state.editingEducationIndex;
+
+      if (index !== null) {
+        state.education[index] = { ...state.educationForm };
+        state.educationForm = { ...emptyEducation };
+        state.editingEducationIndex = null;
+      }
     },
 
     removeEducation: (state, action: PayloadAction<number>) => {
-      state.education = state.education.filter(
-        (_, index) => index !== action.payload,
-      );
+      state.education.splice(action.payload, 1);
     },
-    addExperience: (state, action: PayloadAction<Experience>) => {
-      state.experience.push(action.payload);
+
+    updateExperienceForm: (
+      state,
+      action: PayloadAction<{
+        field: keyof Experience;
+        value: string;
+      }>,
+    ) => {
+      state.experienceForm[action.payload.field] = action.payload.value;
+    },
+
+    saveExperience: (state) => {
+      state.experience.push({ ...state.experienceForm });
+      state.experienceForm = { ...emptyExperience };
+    },
+
+    startEditingExperience: (state, action: PayloadAction<number>) => {
+      state.experienceForm = { ...state.experience[action.payload] };
+      state.editingExperienceIndex = action.payload;
+    },
+
+    updateExperience: (state) => {
+      const index = state.editingExperienceIndex;
+
+      if (index !== null) {
+        state.experience[index] = { ...state.experienceForm };
+        state.experienceForm = { ...emptyExperience };
+        state.editingExperienceIndex = null;
+      }
     },
 
     removeExperience: (state, action: PayloadAction<number>) => {
-      state.experience = state.experience.filter(
-        (_, index) => index !== action.payload,
-      );
+      state.experience.splice(action.payload, 1);
     },
-    addSkill: (state, action: PayloadAction<Skill>) => {
-      state.skills.push(action.payload);
+
+    updateSkillForm: (
+      state,
+      action: PayloadAction<{
+        field: keyof Skill;
+        value: string;
+      }>,
+    ) => {
+      state.skillForm[action.payload.field] = action.payload.value;
+    },
+
+    saveSkill: (state) => {
+      state.skills.push({ ...state.skillForm });
+      state.skillForm = { ...emptySkill };
+    },
+
+    startEditingSkill: (state, action: PayloadAction<number>) => {
+      state.skillForm = { ...state.skills[action.payload] };
+      state.editingSkillIndex = action.payload;
+    },
+
+    updateSkill: (state) => {
+      const index = state.editingSkillIndex;
+
+      if (index !== null) {
+        state.skills[index] = { ...state.skillForm };
+        state.skillForm = { ...emptySkill };
+        state.editingSkillIndex = null;
+      }
     },
 
     removeSkill: (state, action: PayloadAction<number>) => {
-      state.skills = state.skills.filter(
-        (_, index) => index !== action.payload,
-      );
+      state.skills.splice(action.payload, 1);
     },
+
     addProject: (state, action: PayloadAction<Project>) => {
       state.projects.push(action.payload);
     },
 
     removeProject: (state, action: PayloadAction<number>) => {
-      state.projects = state.projects.filter(
-        (_, index) => index !== action.payload,
-      );
+      state.projects.splice(action.payload, 1);
     },
   },
 });
 
 export const {
   updatePersonal,
-  addEducation,
+  updateEducationForm,
+  saveEducation,
+  startEditingEducation,
+  updateEducation,
   removeEducation,
-  addExperience,
+  updateExperienceForm,
+  saveExperience,
+  startEditingExperience,
+  updateExperience,
   removeExperience,
-  addSkill,
+  updateSkillForm,
+  saveSkill,
+  startEditingSkill,
+  updateSkill,
   removeSkill,
   addProject,
   removeProject,
 } = cvSlice.actions;
+
 export default cvSlice.reducer;

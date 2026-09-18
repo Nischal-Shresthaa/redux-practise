@@ -1,6 +1,11 @@
-import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { addExperience, removeExperience } from "../features/cv/cvSlice.ts";
+import {
+  updateExperienceForm,
+  saveExperience,
+  startEditingExperience,
+  updateExperience,
+  removeExperience,
+} from "../features/cv/cvSlice.ts";
 
 function Field({
   value,
@@ -13,106 +18,122 @@ function Field({
 }) {
   return (
     <input
-      className="w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500"
-      placeholder={placeholder}
+      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
       value={value}
-      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      onChange={(event) => onChange(event.target.value)}
     />
   );
 }
 
 function Experience() {
   const dispatch = useAppDispatch();
+
+  const experienceForm = useAppSelector((state) => state.cv.experienceForm);
+
   const experienceList = useAppSelector((state) => state.cv.experience);
 
-  const [experience, setExperience] = useState({
-    job: "",
-    company: "",
-    startDate: "",
-    endDate: "",
-    description: "",
-  });
-
-  const updateField = (field: string, value: string) => {
-    setExperience({
-      ...experience,
-      [field]: value,
-    });
-  };
-
-  const resetExperience = () => {
-    setExperience({
-      job: "",
-      company: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-    });
-  };
+  const editingExperienceIndex = useAppSelector(
+    (state) => state.cv.editingExperienceIndex,
+  );
 
   return (
-    <div className="rounded-xl border bg-white p-5 shadow-sm">
-      <h2 className="mb-4 text-lg font-semibold">Experience</h2>
+    <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm">
+      <h2 className="mb-4 text-xl font-semibold text-gray-900">Experience</h2>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-4">
         {[
           ["job", "Job Title"],
           ["company", "Company"],
           ["startDate", "Start Date"],
           ["endDate", "End Date"],
-        ].map(([field, placeholder]) => (
+        ].map(([experienceField, placeholder]) => (
           <Field
-            key={field}
-            value={experience[field as keyof typeof experience]}
+            key={experienceField}
+            value={
+              experienceForm[experienceField as keyof typeof experienceForm]
+            }
             placeholder={placeholder}
-            onChange={(value) => updateField(field, value)}
+            onChange={(newText) =>
+              dispatch(
+                updateExperienceForm({
+                  field: experienceField as keyof typeof experienceForm,
+                  value: newText,
+                }),
+              )
+            }
           />
         ))}
+
+        <textarea
+          className="col-span-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          placeholder="Describe your responsibilities and achievements"
+          rows={4}
+          value={experienceForm.description}
+          onChange={(event) =>
+            dispatch(
+              updateExperienceForm({
+                field: "description",
+                value: event.target.value,
+              }),
+            )
+          }
+        />
       </div>
 
-      <textarea
-        className="mt-3 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500"
-        placeholder="Description"
-        rows={4}
-        value={experience.description}
-        onChange={(e) => updateField("description", e.target.value)}
-      />
-
       <button
-        className="mt-3 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white"
+        className="mt-4 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white"
         onClick={() => {
-          dispatch(addExperience(experience));
-          resetExperience();
+          if (editingExperienceIndex === null) {
+            dispatch(saveExperience());
+          } else {
+            dispatch(updateExperience());
+          }
         }}
       >
-        Add Experience
+        {editingExperienceIndex === null
+          ? "Add Experience"
+          : "Update Experience"}
       </button>
 
-      <div className="mt-4 space-y-2">
-        {experienceList.map((exp, index) => (
-          <div
-            key={index}
-            className="flex items-start justify-between rounded-lg border p-3"
-          >
-            <div>
-              <p className="font-medium">{exp.job}</p>
-              <p className="text-sm text-gray-500">{exp.company}</p>
+      <div className="mt-5 space-y-3">
+        {experienceList.map((experienceItem, index) => (
+          <div key={index} className="rounded-lg border p-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="font-semibold">{experienceItem.job}</p>
 
-              <p className="text-sm text-gray-500">
-                {exp.startDate} - {exp.endDate}
-              </p>
+                <p className="text-sm text-gray-600">
+                  {experienceItem.company}
+                </p>
 
-              {exp.description && (
-                <p className="mt-1 text-sm">{exp.description}</p>
-              )}
+                <p className="text-sm text-gray-500">
+                  {experienceItem.startDate} - {experienceItem.endDate}
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  className="text-sm text-blue-500"
+                  onClick={() => dispatch(startEditingExperience(index))}
+                >
+                  Edit
+                </button>
+
+                <button
+                  className="text-sm text-red-500"
+                  onClick={() => dispatch(removeExperience(index))}
+                >
+                  Remove
+                </button>
+              </div>
             </div>
 
-            <button
-              className="text-sm text-red-500"
-              onClick={() => dispatch(removeExperience(index))}
-            >
-              Remove
-            </button>
+            {experienceItem.description && (
+              <p className="mt-2 text-sm text-gray-600">
+                {experienceItem.description}
+              </p>
+            )}
           </div>
         ))}
       </div>

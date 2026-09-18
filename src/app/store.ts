@@ -6,5 +6,6 @@ export const store = configureStore({
     cv: cvReducer,
   },
 });
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

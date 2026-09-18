@@ -1,6 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { updatePersonal } from "../features/cv/cvSlice.ts";
-
 function Field({
   label,
   value,
@@ -52,7 +51,12 @@ function PersonalInfo() {
           value={personal.name}
           placeholder="e.g. Nischal Shrestha"
           onChange={(value) =>
-            dispatch(updatePersonal({ field: "name", value }))
+            dispatch(
+              updatePersonal({
+                field: "name",
+                value,
+              }),
+            )
           }
           full
         />
@@ -62,7 +66,12 @@ function PersonalInfo() {
           value={personal.jobTitle}
           placeholder="e.g. Frontend Developer"
           onChange={(value) =>
-            dispatch(updatePersonal({ field: "jobTitle", value }))
+            dispatch(
+              updatePersonal({
+                field: "jobTitle",
+                value,
+              }),
+            )
           }
         />
 
@@ -71,7 +80,12 @@ function PersonalInfo() {
           value={personal.phonenum}
           placeholder="e.g. 98XXXXXXXX"
           onChange={(value) =>
-            dispatch(updatePersonal({ field: "phonenum", value }))
+            dispatch(
+              updatePersonal({
+                field: "phonenum",
+                value,
+              }),
+            )
           }
         />
 
@@ -80,7 +94,12 @@ function PersonalInfo() {
           value={personal.email}
           placeholder="e.g. you@email.com"
           onChange={(value) =>
-            dispatch(updatePersonal({ field: "email", value }))
+            dispatch(
+              updatePersonal({
+                field: "email",
+                value,
+              }),
+            )
           }
         />
 
@@ -89,7 +108,12 @@ function PersonalInfo() {
           value={personal.location}
           placeholder="e.g. Kathmandu, Nepal"
           onChange={(value) =>
-            dispatch(updatePersonal({ field: "location", value }))
+            dispatch(
+              updatePersonal({
+                field: "location",
+                value,
+              }),
+            )
           }
         />
 
@@ -98,7 +122,12 @@ function PersonalInfo() {
           value={personal.linkedin}
           placeholder="linkedin.com/xxx"
           onChange={(value) =>
-            dispatch(updatePersonal({ field: "linkedin", value }))
+            dispatch(
+              updatePersonal({
+                field: "linkedin",
+                value,
+              }),
+            )
           }
           full
         />

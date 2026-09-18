@@ -1,65 +1,101 @@
-import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { addSkill, removeSkill } from "../features/cv/cvSlice.ts";
+import {
+  updateSkillForm,
+  saveSkill,
+  startEditingSkill,
+  updateSkill,
+  removeSkill,
+} from "../features/cv/cvSlice.ts";
 
 function Skills() {
   const dispatch = useAppDispatch();
-  const skillsList = useAppSelector((state) => state.cv.skills);
 
-  const [skill, setSkill] = useState({
-    name: "",
-    level: "",
-  });
+  const skillForm = useAppSelector((state) => state.cv.skillForm);
 
-  const inputClass =
-    "w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-blue-500";
+  const skillList = useAppSelector((state) => state.cv.skills);
+
+  const editingSkillIndex = useAppSelector(
+    (state) => state.cv.editingSkillIndex,
+  );
 
   return (
-    <div className="rounded-xl border bg-white p-5 shadow-sm">
-      <h2 className="mb-4 text-lg font-semibold">Skills</h2>
+    <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm">
+      <h2 className="mb-4 text-xl font-semibold text-gray-900">Skills</h2>
 
-      <div className="flex gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <input
-          className={inputClass}
-          placeholder="Skill"
-          value={skill.name}
-          onChange={(e) => setSkill({ ...skill, name: e.target.value })}
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          placeholder="e.g. React"
+          value={skillForm.name}
+          onChange={(event) =>
+            dispatch(
+              updateSkillForm({
+                field: "name",
+                value: event.target.value,
+              }),
+            )
+          }
         />
 
-        <input
-          className={inputClass}
-          placeholder="Level"
-          value={skill.level}
-          onChange={(e) => setSkill({ ...skill, level: e.target.value })}
-        />
+        <select
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
+          value={skillForm.level}
+          onChange={(event) =>
+            dispatch(
+              updateSkillForm({
+                field: "level",
+                value: event.target.value,
+              }),
+            )
+          }
+        >
+          <option value="">Select Level</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advanced">Advanced</option>
+        </select>
       </div>
 
       <button
-        className="mt-3 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white"
+        className="mt-4 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white"
         onClick={() => {
-          dispatch(addSkill(skill));
-          setSkill({ name: "", level: "" });
+          if (editingSkillIndex === null) {
+            dispatch(saveSkill());
+          } else {
+            dispatch(updateSkill());
+          }
         }}
       >
-        Add Skill
+        {editingSkillIndex === null ? "Add Skill" : "Update Skill"}
       </button>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        {skillsList.map((skill, index) => (
+      <div className="mt-5 space-y-2">
+        {skillList.map((skillItem, index) => (
           <div
             key={index}
-            className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm"
+            className="flex items-center justify-between rounded-lg border p-3"
           >
-            <span>
-              {skill.name} · {skill.level}
-            </span>
+            <div>
+              <p className="font-medium">{skillItem.name}</p>
 
-            <button
-              className="text-red-500"
-              onClick={() => dispatch(removeSkill(index))}
-            >
-              ×
-            </button>
+              <p className="text-sm text-gray-500">{skillItem.level}</p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                className="text-sm text-blue-500"
+                onClick={() => dispatch(startEditingSkill(index))}
+              >
+                Edit
+              </button>
+
+              <button
+                className="text-sm text-red-500"
+                onClick={() => dispatch(removeSkill(index))}
+              >
+                Remove
+              </button>
+            </div>
           </div>
         ))}
       </div>
